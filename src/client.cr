@@ -2,8 +2,8 @@
 require "socket"
 require "colorize"
 
-def conn_ports(port_list)
-
+def conn_ports(port_list, host)
+  
 	channel = Channel(String).new
   
 	port_list.each do |port|
@@ -17,13 +17,12 @@ def conn_ports(port_list)
   
 	  spawn do
       begin
-
         sock = Socket.tcp(Socket::Family::INET)
-        sock.connect "localhost", intport
-        puts "connected #{intport}".colorize.fore(:green)
+        sock.connect host, intport
+        puts "fcat connected: #{host}:#{intport}".colorize.fore(:green)
 
       rescue ex
-        puts "[ERROR] unable to connect to port #{port} - #{ex.message}".colorize.fore(:red)
+        puts "[ERROR] unable to connect: #{host}:#{port} - #{ex.message}".colorize.fore(:red)
         next
       end
 	  end # spawn
@@ -32,4 +31,5 @@ def conn_ports(port_list)
 	while 1 == 1
 	  puts channel.receive
 	end
-  end
+  
+end

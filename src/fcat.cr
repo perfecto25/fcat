@@ -44,20 +44,35 @@ module Fcat
     main do
       desc "FCAT firewall testing tool"
       usage "
-      run as server: fcat -p 2400,2900-3500  <- will open up all ports in this range
-      run as client: fcat conn 2900-3500  <- will connect to all ports in this range
+      for full instructions see:  https://github.com/perfecto25/fcat
+      
+      run as server: fcat -p 2400,2900-3500
+      run as client: fcat conn -h targetHost/IP -p 2400,2900-3500  
+      
       "
-      version "Version 0.1.0"
-      option "-p PORT", "--port=PORT", type: String, desc: "Ports.", default: "11235"
+      version "Version 0.1.1"
+      option "-p PORT", "--port=PORT", type: String, desc: "Ports (example: -p 1200,1300,1400-1800)", default: "11235"
+      option "-h HOST", "--host=HOSTNAME/IP", type: String, desc: "Hostname or IP", default: "localhost"
       argument "conn", type: String, desc: "connect to ports", default: ""
       
       run do |opts, args|
-        ports = opts.port
-        port_arr = get_ports(ports)  
-        
+        port_arr = get_ports(opts.port)  
+      
         if port_arr.size > 0
-          conn_ports(port_arr) if args.conn != ""
-          serve_ports(port_arr) if args.conn == ""
+          if port_arr.size == 1 && port_arr[0] == 11235
+            puts "warning: no port provided, using default port 11235".colorize.fore(:yellow)
+          end 
+          
+          # client mode
+          if args.conn != ""
+            conn_ports(port_arr, opts.host)
+          end
+          
+          # server mode
+          if args.conn == ""
+            serve_ports(port_arr)
+          end
+          
         else
             puts "no ports provided".colorize.fore(:yellow)
         end

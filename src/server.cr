@@ -25,7 +25,7 @@ def serve_ports(port_list)
       end
   
       server.accept do |client|
-        message = "fcat serving [#{port}]"
+        message = "fcat serving port: [#{port}]"
       end
 	  end # spawn
 	end
