@@ -2,7 +2,7 @@
 require "socket"
 require "colorize"
 
-def serve_ports(port_list)
+def conn_ports(port_list)
 
 	channel = Channel(String).new
   
@@ -17,15 +17,14 @@ def serve_ports(port_list)
   
 	  spawn do
       begin
-        server = TCPServer.new("0.0.0.0", intport)
-        puts "fcat serving port: #{intport}".colorize.fore(:green)
+
+        sock = Socket.tcp(Socket::Family::INET)
+        sock.connect "localhost", intport
+        puts "connected #{intport}".colorize.fore(:green)
+
       rescue ex
-        puts "unable to serve port #{port} - #{ex.message}".colorize.fore(:yellow)
+        puts "[ERROR] unable to connect to port #{port} - #{ex.message}".colorize.fore(:red)
         next
-      end
-  
-      server.accept do |client|
-        message = "fcat serving [#{port}]"
       end
 	  end # spawn
 	end

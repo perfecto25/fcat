@@ -54,15 +54,12 @@ module Fcat
       run do |opts, args|
         ports = opts.port
         port_arr = get_ports(ports)  
-      
-        if args.conn != ""
-          puts "client"
+        
+        if port_arr.size > 0
+          conn_ports(port_arr) if args.conn != ""
+          serve_ports(port_arr) if args.conn == ""
         else
-          if port_arr.size > 0
-            start_ports(port_arr)
-          else
             puts "no ports provided".colorize.fore(:yellow)
-          end
         end
 
       end # run do
