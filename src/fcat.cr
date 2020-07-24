@@ -1,44 +1,45 @@
 require "clim"
-require "socket"
 require "colorize"
+require "./*"
 
-def start_server(port_list)
-
-  channel = Channel(String).new
-
-  port_list.each do |port|
-    
-    begin
-      intport = port.to_i
-    rescue
-      puts "invalid port number: #{port}".colorize.fore(:red)
-      exit
-    end
-
-    spawn do  
-      puts "fcat serving [#{intport}]"
+# generate array of ports
+def get_ports(ports)
+  
+  all_ports = ports.split(",")
+  port_arr = [] of (Int32)
+  
+  all_ports.each do |port|
+  
+    if port.includes? "-"
 
       begin
-        server = TCPServer.new("0.0.0.0", intport)
+        minmax = port.split("-")
+        range = Range.new(minmax[0].to_i, minmax[-1].to_i)  
+        range.each do |r|
+          port_arr << r if r < 65535 # highest possible port number
+        end
       rescue
-        puts "unable to bind to port #{port}"
+        puts "invalid port range: #{port}".colorize.fore(:red)
         exit
       end
 
-      server.accept do |client|
-        message = "fcat serving [#{port}]"
-        client << message # echo the message back
-        channel.send("connected #{port}")
-      end
+      next
     end
+
+    begin
+      intport = port.to_i
+    rescue
+      puts "invalid port: #{port}".colorize.fore(:red)
+      next
+    end
+
+    port_arr << intport
   end
-  
-  while 1 == 1
-    puts channel.receive
-  end
+
+  return port_arr.uniq.sort
 end
 
-module Hello
+module Fcat
   class Cli < Clim
     main do
       desc "FCAT firewall testing tool"
@@ -49,23 +50,24 @@ module Hello
       version "Version 0.1.0"
       option "-p PORT", "--port=PORT", type: String, desc: "Ports.", default: "11235"
       argument "conn", type: String, desc: "connect to ports", default: ""
-      #argument "ports", type: Array(Int32), desc: "port or portrange", default: "16400"
       
-
       run do |opts, args|
-
-
-
         ports = opts.port
-        port_list = [] of (Int32)
-        port_list = ports.split(",")
+        port_arr = get_ports(ports)  
+      
+        if args.conn != ""
+          puts "client"
+        else
+          if port_arr.size > 0
+            start_ports(port_arr)
+          else
+            puts "no ports provided".colorize.fore(:yellow)
+          end
+        end
 
-        start_server(port_list)
-        #start_server(port_range)
-      end
+      end # run do
+    end # main
+  end # class Cli
+end # Module Fcat
 
-    end
-  end
-end
-
-Hello::Cli.start(ARGV)
+Fcat::Cli.start(ARGV)

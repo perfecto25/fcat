@@ -1,26 +1,36 @@
 
 require "socket"
-require "http/server"
+require "colorize"
 
-Module 
-def start_port(port)
+def start_ports(port_list)
+
+	channel = Channel(String).new
   
-	a = [] of (Int32)
-	port_range = port.split(",")
-	puts port_range
-	#server = HTTP::Server.new do |context|
-#		context.response.content_type = "text/plain"
-#		context.response.print "Hello world!"#
-#	end
-
-#	puts port
-
-#	puts port.is_a?(String)
-	#porti = port.to(Int32)
-#	address = server.bind_tcp "0.0.0.0", 4444
-#	puts "Listening on http://#{address}"
-#	server.listen
-    #bport = port.to_i
-    #sock = Socket.tcp(Socket::Family::INET)
-    #sock.bind "localhost", bport
-end
+	port_list.each do |port|
+	  
+	  begin
+      intport = port.to_i
+	  rescue
+      puts "invalid port number: #{port}".colorize.fore(:red)
+      exit
+	  end
+  
+	  spawn do
+      begin
+        server = TCPServer.new("0.0.0.0", intport)
+        puts "fcat serving port: #{intport}".colorize.fore(:green)
+      rescue ex
+        puts "unable to bind to port #{port} - #{ex.message}".colorize.fore(:yellow)
+        next
+      end
+  
+      server.accept do |client|
+        message = "fcat serving [#{port}]"
+      end
+	  end # spawn
+	end
+	
+	while 1 == 1
+	  puts channel.receive
+	end
+  end
