@@ -35,7 +35,7 @@ Client mode will work like a lightweight Netcat process, it will try to connect 
 
 pass command 'conn' to run as client
 
-pass flag -h``` for HOST
+pass flag -h for HOST
 
 pass flag -p for PORT
 
