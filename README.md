@@ -17,12 +17,28 @@ Fcat can open up ports for testing and close them once testing is complete.
 ---
 ## Installation
 
-### Centos
-(required libs)
+to install the binary on Ubuntu or Centos distros
 
-yum install libevent
+### Centos 7
+    
+    yum -y install libevent
+    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.2/fcat-0.1.2-centos7 -O /usr/local/bin/fcat;
+    sudo chown root:root /usr/local/bin/fcat;
+    sudo chmod 755 /usr/local/bin/fcat;
+    sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
 
-install Fcat binaries located on Release page
+### Ubuntu 16
+
+    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.2/fcat-0.1.2-ubuntu16 -O /usr/local/bin/fcat;
+    sudo chown root:root /usr/local/bin/fcat;
+    sudo chmod 755 /usr/local/bin/fcat;
+    sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
+
+### Ubuntu 18 / Mint 19
+    
+    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.2/fcat-0.1.2-ubuntu18 -O /usr/local/bin/fcat;sudo chown root:root /usr/local/bin/fcat;
+    sudo chmod 755 /usr/local/bin/fcat;
+    sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
 
 ---
 ## Usage
@@ -79,6 +95,9 @@ to build Fcat binary, run
 
     crystal build src/fcat.cr --release -o bin/fcat
     
+RPM and DEB packaging is done via fpm
+
+
 ---
 ## Development
 

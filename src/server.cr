@@ -90,10 +90,7 @@ def serve_ports(port_list, interface)
 	  spawn do
       begin
         server = TCPServer.new(ip, intport)
-        p1 = "fcat serving".colorize.fore(:green)
-        p2 = "#{ip}".colorize.fore(:white)
-        p3 = "#{intport}".colorize.fore(:cyan)
-        puts "#{p1} #{p2}:#{p3}"
+        puts "fcat serving #{ip}:#{intport}".colorize.fore(:green)
       rescue ex
         puts "unable to serve port #{port} - #{ex.message}".colorize.fore(:yellow)
         next
