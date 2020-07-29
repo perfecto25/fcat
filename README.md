@@ -17,7 +17,12 @@ Fcat can open up ports for testing and close them once testing is complete.
 ---
 ## Installation
 
-to do: add Bintray repo with Ubuntu & Centos binaries
+### Centos
+(required libs)
+
+yum install libevent
+
+install Fcat binaries located on Release page
 
 ---
 ## Usage

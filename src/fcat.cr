@@ -50,9 +50,10 @@ module Fcat
       run as client: fcat conn -h targetHost/IP -p 2400,2900-3500  
       
       "
-      version "Version 0.1.1"
+      version "Version 0.1.2"
       option "-p PORT", "--port=PORT", type: String, desc: "Ports (example: -p 1200,1300,1400-1800)", default: "11235"
       option "-h HOST", "--host=HOSTNAME/IP", type: String, desc: "Hostname or IP", default: "localhost"
+      option "-i INTERFACE", "--interface=NAME/IP", type: String, desc: "Network interface name", default: "0.0.0.0"
       argument "conn", type: String, desc: "connect to ports", default: ""
       
       run do |opts, args|
@@ -70,7 +71,7 @@ module Fcat
           
           # server mode
           if args.conn == ""
-            serve_ports(port_arr)
+            serve_ports(port_arr, opts.interface)
           end
           
         else
