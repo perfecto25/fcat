@@ -17,7 +17,12 @@ Fcat can open up ports for testing and close them once testing is complete.
 ---
 ## Installation
 
-to do: add Bintray repo with Ubuntu & Centos binaries
+### Centos
+(required libs)
+
+yum install libevent
+
+install Fcat binaries located on Release page
 
 ---
 ## Usage
@@ -29,8 +34,12 @@ Client mode will work like a lightweight Netcat process, it will try to connect 
 
 ### Server Mode
 
-    fcat -p [port range (default is port 11235)]
+    fcat -p <port or port-range> (default is port 11235)
     
+to bind to specific interface
+
+    fcat -p <port> -i <interface name or IP>
+
 ### Client Mode
 
 pass command 'conn' to run as client
@@ -39,12 +48,14 @@ pass flag -h for HOST
 
 pass flag -p for PORT
 
-    fcat conn -h [target (default is localhost)] -p [port range (default is port 11235)]
+    fcat conn -h <target> -p <port or port-range> (default is port 11235)
 
 ### Examples
 to open up ports on Host A
 
     hostA> fcat -p 1500,1900,21000-21500  (will open ports 1500,1900 and every port in 21000-21500 range)
+
+    hostA > fcat -p 2000,3400-3500,27000-27150 -i 192.168.35.2
     
 to test connectivity to above ports from Host B
     
@@ -89,4 +100,3 @@ TODO: Write development instructions here
 ---
 ## Roadmap
 
-1. add option to bind to specific network interface (server mode)

@@ -19,7 +19,10 @@ def conn_ports(port_list, host)
       begin
         sock = Socket.tcp(Socket::Family::INET)
         sock.connect host, intport
-        puts "fcat connected: #{host}:#{intport}".colorize.fore(:green)
+        p1 = "fcat connected".colorize.fore(:green)
+        p2 = "#{host}".colorize.fore(:white)
+        p3 = "#{intport}".colorize.fore(:cyan)
+        puts "#{p1} #{p2}:#{p3}"
 
       rescue ex
         puts "[ERROR] unable to connect: #{host}:#{port} - #{ex.message}".colorize.fore(:red)

@@ -1,5 +1,5 @@
 name: fcat
-version: 0.1.1
+version: 0.1.2
 
 authors:
   - Mike R (https://github.com/perfecto25)
@@ -12,6 +12,8 @@ dependencies:
   clim:
     github: at-grandpa/clim
     version: 0.13.0
+  ipaddr:
+    github: arcage/crystal-ipaddr
 
 crystal: 0.35.1
 
