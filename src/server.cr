@@ -1,7 +1,6 @@
 
 require "socket"
 require "colorize"
-#require "net_sample"
 
 lib LibC
   AF_PACKET = 17
@@ -72,11 +71,10 @@ def serve_ports(port_list, interface)
     begin
       ip = get_nic_ip[interface]
     rescue
-      puts "invalid interface name"
+      puts "invalid interface name".colorize.fore(:red)
       exit
     end   
   end
-  
   
 	channel = Channel(String).new
   
@@ -92,7 +90,7 @@ def serve_ports(port_list, interface)
 	  spawn do
       begin
         server = TCPServer.new(ip, intport)
-        p1 = "fcat serving >".colorize.fore(:green)
+        p1 = "fcat serving".colorize.fore(:green)
         p2 = "#{ip}".colorize.fore(:white)
         p3 = "#{intport}".colorize.fore(:cyan)
         puts "#{p1} #{p2}:#{p3}"
