@@ -56,7 +56,8 @@ to open up ports on Host A
     hostA> fcat -p 1500,1900,21000-21500  (will open ports 1500,1900 and every port in 21000-21500 range)
 
     hostA > fcat -p 2000,3400-3500,27000-27150 -i 192.168.35.2
-    
+    hostA > fcat -p 2000,3400-3500,27000-27150 -i em1
+
 to test connectivity to above ports from Host B
     
     hostB > fcat conn -h hostA -p 21000-21500 (will test basic TCP connection to this port range)
