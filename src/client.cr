@@ -2,7 +2,7 @@
 require "socket"
 require "colorize"
 
-def conn_ports(port_list, host)
+def conn_ports(port_list, host, wait)
   
 	channel = Channel(String).new
   
@@ -29,6 +29,10 @@ def conn_ports(port_list, host)
         next
       end
 	  end # spawn
+
+    if wait > 0
+      sleep wait
+    end
 	end
 	
 	while 1 == 1
