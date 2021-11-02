@@ -3,6 +3,7 @@ require "socket"
 require "colorize"
 
 
+
 lib LibC
   AF_PACKET = 17
 
@@ -62,7 +63,7 @@ def get_nic_ip()
   nics
 end
 
-def spawn_port(ip, intport)
+def spawn_port(ip, intport, deque)
   spawn do
     begin
       server = TCPServer.new(ip, intport)
@@ -70,11 +71,14 @@ def spawn_port(ip, intport)
       p2 = "#{ip}".colorize.white
       p3 = "#{intport}".colorize.cyan
       puts "#{p1} #{p2}:#{p3}"
+      tuple = {intport, server}
+      deque.push(server)
     rescue ex
       puts "unable to serve port #{intport} - #{ex.message}".colorize.yellow
       next
     end
 
+    
 #    server.accept do |client|
  #     message = "fcat serving port: [#{intport}]"
   #  end
@@ -87,8 +91,10 @@ def start_channel(channel)
   end
 end
 
+
 def serve_ports(port_list, interface, span)
-  
+  deque = Deque(TCPServer).new
+
   span_count = 0
 
   # regex check if interface = ip address or hostname
@@ -103,9 +109,13 @@ def serve_ports(port_list, interface, span)
     end   
   end
   
-	channel = Channel(Int16).new
-  
-  
+  if span > 0
+    channel = Channel(Int32).new(span)
+  else
+    channel = Channel(Int32).new
+  end
+
+  # get span list of ports  
   port_list.each do |port|
     puts span.colorize.yellow
     puts span_count.colorize.blue
@@ -118,7 +128,8 @@ def serve_ports(port_list, interface, span)
         exit
       end
 
-      spawn_port(ip, intport)
+      spawn_port(ip, intport, deque)
+      puts deque
       Fiber.yield
     end
 
@@ -133,10 +144,18 @@ def serve_ports(port_list, interface, span)
 
       span_count = 0
       puts user_input.colorize.magenta
+      
     end
 
   end # port_list.each
 	
- # start_channel(channel)
-
-end
+  loop do
+    if val = channel.receive?
+      puts val
+    else
+      break
+    end
+  end
+#  start_channel(channel)
+  
+end 
