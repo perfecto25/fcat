@@ -1,6 +1,7 @@
 require "clim"
 require "colorize"
-require "./*"
+require "./server"
+require "./client"
 
 # generate array of ports
 def get_ports(ports)
@@ -55,7 +56,7 @@ module Fcat
       option "-h HOST", "--host=HOSTNAME/IP", type: String, desc: "Hostname or IP", default: ""
       option "-i INTERFACE", "--interface=NAME/IP", type: String, desc: "Network interface name", default: "0.0.0.0"
       option "-w WAIT", "--wait=WAIT", type: Int16, desc: "Wait interval (seconds)", default: 0
-      option "-s SPAN", "--span=SPAN", type: Int32, desc: "Span of ports to serve at a time", default: 100
+      option "-s SPAN", "--span=SPAN", type: String, desc: "Span of ports to serve at a time", default: "100"
       argument "conn", type: String, desc: "connect to ports", default: ""
       
       run do |opts, args|
