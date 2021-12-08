@@ -23,21 +23,21 @@ to install the binary on Ubuntu or Centos distros
 ### Centos 7
 
     yum -y install libevent
-    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.2/fcat-0.1.2-centos7 -O /usr/local/bin/fcat;
+    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.3/fcat-0.1.3-centos7 -O /usr/local/bin/fcat;
     sudo chown root:root /usr/local/bin/fcat;
     sudo chmod 755 /usr/local/bin/fcat;
     sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
 
 ### Ubuntu 16
 
-    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.2/fcat-0.1.2-ubuntu16 -O /usr/local/bin/fcat;
+    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.3/fcat-0.1.3-ubuntu16 -O /usr/local/bin/fcat;
     sudo chown root:root /usr/local/bin/fcat;
     sudo chmod 755 /usr/local/bin/fcat;
     sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
 
 ### Ubuntu 18 / Mint 19
 
-    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.2/fcat-0.1.2-ubuntu18 -O /usr/local/bin/fcat;sudo chown root:root /usr/local/bin/fcat;
+    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.3/fcat-0.1.3-ubuntu18 -O /usr/local/bin/fcat;sudo chown root:root /usr/local/bin/fcat;
     sudo chmod 755 /usr/local/bin/fcat;
     sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
 

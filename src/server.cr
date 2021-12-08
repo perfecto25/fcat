@@ -3,19 +3,20 @@ require "socket"
 require "colorize"
 require "./func"
 
-
-
-def spawn_port(ip, intport, current_span, active_ports)
+def spawn_port(ip, port, active_ports, span_count)
   spawn do
     begin
-      server = TCPServer.new(ip, intport)
+      server = TCPServer.new(ip, port.to_i)
       p1 = "fcat serving".colorize.green
       p2 = "#{ip}".colorize.white
-      p3 = "#{intport}".colorize.cyan
+      p3 = "#{port}".colorize.cyan
       puts "#{p1} #{p2}:#{p3}"
       active_ports << server
-    rescue ex
-      puts "unable to serve port #{intport} - #{ex.message}".colorize.yellow
+      Fiber.yield
+      
+      puts "from spawn ports"
+    rescue exception
+      puts "unable to serve port #{port} - #{exception.message}".colorize.yellow
       next
     end
   end # spawn
@@ -23,34 +24,57 @@ def spawn_port(ip, intport, current_span, active_ports)
 end
 
 
-def serve_ports(port_list, interface, span) 
+def serve_ports(port_list, interface, wait, span) 
   span_count = 0
   ip = check_iface(interface)  
   channel = Channel(Int32).new  
   active_ports = Array(TCPSocket).new
 
-  if span.to_i == 0
-    puts "zero"
+  if span == 0
+    puts "wait #{wait}"
+    port_list.each do |port|
+      begin 
+        unless port.nil?
+          if wait > 0
+            sleep wait
+          end
+          spawn_port(ip, port, active_ports)
+          
+
+
+        end
+      rescue exception
+        puts exception.colorize.red
+      end
+
+    end # port_list
+
   else
-    port_list.in_groups_of(span.to_i) { |span_group| 
+
+    port_list.in_groups_of(span) { |span_group| 
+
       span_group.each do |port|
-        if span.to_i > 0 && span_count < span.to_i
+        if span > 0 && span_count < span
           begin
             unless port.nil? 
-              intport = port.to_i
-              spawn_port(ip, intport, span.to_i, active_ports)              
-              Fiber.yield
+              if wait > 0
+                sleep wait
+              end
+              spawn_port(ip, port, active_ports)              
             end
-          rescue
-            puts "invalid port number: #{port}".colorize.red
+          rescue exception
+            puts exception.colorize.red
             exit
           end    
         end
 
         span_count += 1
-    
-        if span_count == span.to_i
-          puts active_ports.colorize.blue
+        puts span_count
+        puts port_list.size
+        if span_count == port_list.size
+          puts "equal"
+        end
+        if span_count == span && span_count <= port_list.size
           puts "press 'n' for next span of ports"
     
           until (user_input = gets) && (!user_input.blank?) && (user_input == "n")
@@ -63,23 +87,25 @@ def serve_ports(port_list, interface, span)
     
           span_count = 0
           channel.close
-          puts user_input.colorize.magenta
           
+          #if wait > 0
+          #  sleep wait
+          #end
+
         end
-    
       end # span_group.each
     }
 
 
   end      
 	
-  loop do
-    if val = channel.receive?
-      puts val
-    else
-      break
+	while 1 == 1
+    begin
+  	  puts channel.receive
+    rescue
+      exit
     end
-  end
+	end
 #  start_channel(channel)
   
 end 

@@ -75,12 +75,12 @@ module Fcat
               puts "provide host to connect to: fcat conn -h <hostname or IP>".colorize.red
               exit
             end
-            conn_ports(port_arr, opts.host, opts.wait)
+            conn_ports(port_arr, opts.host, opts.wait.to_i, opts.span.to_i)
           end
           
           # server mode
           if args.conn == ""
-            serve_ports(port_arr, opts.interface, opts.span)
+            serve_ports(port_arr, opts.interface, opts.wait.to_i, opts.span.to_i)
           end
           
         else
