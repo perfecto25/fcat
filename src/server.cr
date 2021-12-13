@@ -34,7 +34,6 @@ def serve_ports(port_list, interface, wait, span)
   active_ports = Array(TCPSocket).new
 
   if span == 0
-    puts "wait #{wait}"
     port_list.each do |port|
       begin 
         unless port.nil?
@@ -73,7 +72,7 @@ def serve_ports(port_list, interface, wait, span)
 
         span_count += 1
 
-        if span_count == span && span_count <= port_list.size && span > 0
+        if span_count == span && span_count <= port_list.size && span > 0 && port_list.size >= span
           until (user_input = gets) && (!user_input.blank?) && (user_input == "n")
             puts "press 'n' for next span of ports"
           end
