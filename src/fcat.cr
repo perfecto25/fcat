@@ -1,6 +1,7 @@
 require "clim"
 require "colorize"
-require "./*"
+require "./server"
+require "./client"
 
 # generate array of ports
 def get_ports(ports)
@@ -50,37 +51,40 @@ module Fcat
       run as client: fcat conn -h targetHost/IP -p 2400,2900-3500  
       
       "
-      version "Version 0.1.2"
+      version "Version 0.1.3"
       option "-p PORT", "--port=PORT", type: String, desc: "Ports (example: -p 1200,1300,1400-1800)", default: "11235"
       option "-h HOST", "--host=HOSTNAME/IP", type: String, desc: "Hostname or IP", default: ""
       option "-i INTERFACE", "--interface=NAME/IP", type: String, desc: "Network interface name", default: "0.0.0.0"
+      option "-w WAIT", "--wait=WAIT", type: Int16, desc: "Wait interval (seconds)", default: 0
+      option "-s SPAN", "--span=SPAN", type: String, desc: "Span of ports to serve at a time", default: "100"
       argument "conn", type: String, desc: "connect to ports", default: ""
       
       run do |opts, args|
+        
         port_arr = get_ports(opts.port)  
       
         if port_arr.size > 0
           
           if port_arr.size == 1 && port_arr[0] == 11235
-            puts "warning: no port provided, using default port 11235".colorize.fore(:yellow)
+            puts "warning: no port provided, using default port 11235".colorize.yellow
           end 
           
           # client mode
           if args.conn != ""
             if opts.host == ""
-              puts "provide host to connect to: fcat conn -h <hostname or IP>".colorize.fore(:red)
+              puts "provide host to connect to: fcat conn -h <hostname or IP>".colorize.red
               exit
             end
-            conn_ports(port_arr, opts.host)
+            conn_ports(port_arr, opts.host, opts.wait.to_i, opts.span.to_i)
           end
           
           # server mode
           if args.conn == ""
-            serve_ports(port_arr, opts.interface)
+            serve_ports(port_arr, opts.interface, opts.wait.to_i, opts.span.to_i)
           end
           
         else
-            puts "no ports provided".colorize.fore(:yellow)
+            puts "no ports provided".colorize.yellow
         end
 
       end # run do

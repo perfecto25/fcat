@@ -2,37 +2,95 @@
 require "socket"
 require "colorize"
 
-def conn_ports(port_list, host)
-  
-	channel = Channel(String).new
-  
-	port_list.each do |port|
-	  
-	  begin
-      intport = port.to_i
-	  rescue
-      puts "invalid port number: #{port}".colorize.fore(:red)
-      exit
-	  end
-  
-	  spawn do
-      begin
-        sock = Socket.tcp(Socket::Family::INET)
-        sock.connect host, intport
-        p1 = "fcat connected".colorize.fore(:green)
-        p2 = "#{host}".colorize.fore(:white)
-        p3 = "#{intport}".colorize.fore(:cyan)
-        puts "#{p1} #{p2}:#{p3}"
+def spawn_conn(host, port, active_ports)
+  spawn do
+    begin
+      sock = Socket.tcp(Socket::Family::INET)
+      sock.connect host, port.to_i
+      p1 = "fcat connected".colorize.green
+      p2 = "#{host}".colorize.white
+      p3 = "#{port}".colorize.cyan
+      puts "#{p1} #{p2}:#{p3}"
+      active_ports << sock
+      Fiber.yield
+    rescue exception
+      puts "[ERROR] unable to connect: #{host}:#{port} - #{exception.message}".colorize.red
+      next
+    end
+  end # spawn
+end
 
-      rescue ex
-        puts "[ERROR] unable to connect: #{host}:#{port} - #{ex.message}".colorize.fore(:red)
-        next
+
+def conn_ports(port_list, host, wait, span)
+  span_count = 0
+	channel = Channel(String).new
+  active_ports = Array(Socket).new
+
+  if span == 0
+    port_list.each do |port|
+      
+      if wait > 0
+        sleep wait
       end
-	  end # spawn
-	end
-	
-	while 1 == 1
-	  puts channel.receive
-	end
+
+      begin
+        unless port.nil?
+          spawn_conn(host, port, active_ports)
+        end
+      rescue exception
+        puts exception.colorize.red
+      end
+    end # port_list
   
+  else
+
+    port_list.in_groups_of(span) { |span_group|
+    
+      if wait > 0
+        sleep wait
+      end
+
+      span_group.each do |port|
+        if span > 0 && span_count < span
+          begin
+            unless port.nil?
+              spawn_conn(host, port, active_ports)
+            end
+          rescue exception
+            puts exception.colorize.red
+            exit
+          end            
+        end
+
+        span_count += 1
+
+        if span_count == span && span > 0 && port_list.size >= span
+          puts span
+          puts "press 'n' for next span of ports"
+          
+          until (user_input = gets) && (!user_input.blank?) && (user_input == "n")
+            puts "press 'n' for next span of ports"
+          end
+
+          
+          active_ports.each do |port|
+            port.close
+          end
+
+          span_count = 0
+          channel.close
+          
+        end 
+      end # span_group.each
+    }
+  end
+
+	while 1 == 1
+    if channel.closed?
+      exit
+    else
+      puts channel.receive
+    end 
+	end
+
 end
