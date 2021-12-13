@@ -65,7 +65,6 @@ def conn_ports(port_list, host, wait, span)
         span_count += 1
 
         if span_count == span && span > 0 && port_list.size >= span
-          puts span
           puts "press 'n' for next span of ports"
           
           until (user_input = gets) && (!user_input.blank?) && (user_input == "n")
