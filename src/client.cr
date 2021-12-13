@@ -26,7 +26,7 @@ def conn_ports(port_list, host, wait, span)
 	channel = Channel(String).new
   active_ports = Array(Socket).new
 
-  if span.to_i == 0
+  if span == 0
     port_list.each do |port|
       
       if wait > 0
@@ -44,14 +44,14 @@ def conn_ports(port_list, host, wait, span)
   
   else
 
-    port_list.in_groups_of(span.to_i) { |span_group|
+    port_list.in_groups_of(span) { |span_group|
     
       if wait > 0
         sleep wait
       end
 
       span_group.each do |port|
-        if span.to_i > 0 && span_count < span.to_i
+        if span > 0 && span_count < span
           begin
             unless port.nil?
               spawn_conn(host, port, active_ports)
@@ -64,26 +64,33 @@ def conn_ports(port_list, host, wait, span)
 
         span_count += 1
 
-        if span_count == span.to_i
+        if span_count == span && span > 0 && port_list.size >= span
+          puts span
           puts "press 'n' for next span of ports"
           
           until (user_input = gets) && (!user_input.blank?) && (user_input == "n")
             puts "press 'n' for next span of ports"
           end
 
+          
           active_ports.each do |port|
             port.close
           end
 
           span_count = 0
           channel.close
+          
         end 
       end # span_group.each
     }
   end
 
 	while 1 == 1
-	  puts channel.receive
+    if channel.closed?
+      exit
+    else
+      puts channel.receive
+    end 
 	end
 
 end

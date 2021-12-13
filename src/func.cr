@@ -58,16 +58,29 @@ nics
 end
 
 
-def check_iface(interface)
-# regex check if interface = ip address or hostname
-if interface.match(/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/)
-  ip = interface
-else # if iface name, get IP for iface
-  begin
-    ip = get_nic_ip[interface]
-  rescue
-    puts "invalid interface name".colorize.red
+
+def check_port(port)
+  if port.to_i > 65536 
+    puts "port #{port} is too high".colorize.red
     exit
-  end   
+  end
+
+  if port.to_i <= 0
+    puts "invalid port".colorize.red
+    exit
+  end
 end
+
+def check_iface(interface)
+  # regex check if interface = ip address or hostname
+  if interface.match(/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/)
+    ip = interface
+  else # if iface name, get IP for iface
+    begin
+      ip = get_nic_ip[interface]
+    rescue
+      puts "invalid interface name".colorize.red
+      exit
+    end   
+  end
 end

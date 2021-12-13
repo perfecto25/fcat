@@ -3,7 +3,7 @@ require "socket"
 require "colorize"
 require "./func"
 
-def spawn_port(ip, port, active_ports, span_count)
+def spawn_port(ip, port, active_ports, span, span_count )
   spawn do
     begin
       server = TCPServer.new(ip, port.to_i)
@@ -13,8 +13,11 @@ def spawn_port(ip, port, active_ports, span_count)
       puts "#{p1} #{p2}:#{p3}"
       active_ports << server
       Fiber.yield
-      
-      puts "from spawn ports"
+
+      if span_count+1 == span && span > 0
+        puts "press 'n' for next span of ports"
+      end
+
     rescue exception
       puts "unable to serve port #{port} - #{exception.message}".colorize.yellow
       next
@@ -38,13 +41,12 @@ def serve_ports(port_list, interface, wait, span)
           if wait > 0
             sleep wait
           end
-          spawn_port(ip, port, active_ports)
-          
-
-
+          check_port(port)
+          spawn_port(ip, port, active_ports, span, span_count)
         end
       rescue exception
         puts exception.colorize.red
+        exit
       end
 
     end # port_list
@@ -60,7 +62,8 @@ def serve_ports(port_list, interface, wait, span)
               if wait > 0
                 sleep wait
               end
-              spawn_port(ip, port, active_ports)              
+              check_port(port)
+              spawn_port(ip, port, active_ports, span, span_count)              
             end
           rescue exception
             puts exception.colorize.red
@@ -69,28 +72,18 @@ def serve_ports(port_list, interface, wait, span)
         end
 
         span_count += 1
-        puts span_count
-        puts port_list.size
-        if span_count == port_list.size
-          puts "equal"
-        end
-        if span_count == span && span_count <= port_list.size
-          puts "press 'n' for next span of ports"
-    
+
+        if span_count == span && span_count <= port_list.size && span > 0
           until (user_input = gets) && (!user_input.blank?) && (user_input == "n")
             puts "press 'n' for next span of ports"
           end
 
           active_ports.each do |port|
             port.close
-          end
+          end      
     
           span_count = 0
           channel.close
-          
-          #if wait > 0
-          #  sleep wait
-          #end
 
         end
       end # span_group.each
@@ -100,12 +93,11 @@ def serve_ports(port_list, interface, wait, span)
   end      
 	
 	while 1 == 1
-    begin
-  	  puts channel.receive
-    rescue
+    if channel.closed?
       exit
-    end
+    else
+      puts channel.receive
+    end 
 	end
-#  start_channel(channel)
-  
+
 end 

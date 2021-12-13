@@ -28,16 +28,17 @@ to install the binary on Ubuntu or Centos distros
     sudo chmod 755 /usr/local/bin/fcat;
     sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
 
-### Ubuntu 16
+### Centos 8 / Rocky 8
 
-    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.3/fcat-0.1.3-ubuntu16 -O /usr/local/bin/fcat;
+    yum -y install libevent
+    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.3/fcat-0.1.3-centos8 -O /usr/local/bin/fcat;
     sudo chown root:root /usr/local/bin/fcat;
     sudo chmod 755 /usr/local/bin/fcat;
     sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
 
-### Ubuntu 18 / Mint 19
+### Ubuntu 21.04
 
-    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.3/fcat-0.1.3-ubuntu18 -O /usr/local/bin/fcat;sudo chown root:root /usr/local/bin/fcat;
+    sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.3/fcat-0.1.3-ubuntu21 -O /usr/local/bin/fcat;sudo chown root:root /usr/local/bin/fcat;
     sudo chmod 755 /usr/local/bin/fcat;
     sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
 
@@ -61,18 +62,17 @@ to bind to specific interface
 
 **Port Span**
 
-by default, Fcat will limit port allocation at 1 time to 100 ports to avoid potential system issues. If the port range provided is very large, opening up all ports in the range has the potential to use up all available file descriptors for the user who is calling the Fcat process. The default 100 port span limits any potential file descriptor issue. 
+by default, Fcat will limit port allocation at 1 time to 100 ports to avoid potential system issues. If the port range provided is very large, opening up all ports in the range has the potential to use up all available file descriptors for the user who is calling the Fcat process. The default 100 port span limits any potential file descriptor issue.
 
 once the 100 span limit is reached, Fcat will pause and wait for Enter key to be pressed, it will remove the previous span of ports and generate the next cycle of ports.
 
-If you want to run Fcat without limiting file descriptor usage, provide a flag ```-s 0``` which is unlimited span.  
+If you want to run Fcat without limiting file descriptor usage, provide a flag `-s 0` which is unlimited span.
 
 **Wait**
 
-by default the Fcat server will spin up ports instantly. If you'd like to give it a wait/sleep between opening up a new port, provide a ``` -w <number of seconds>```
+by default the Fcat server will spin up ports instantly. If you'd like to give it a wait/sleep between opening up a new port, provide a ` -w <number of seconds>`
 
 Fcat will open up a port, wait/sleep for provided seconds, and continue to the next port. By default, wait=0
-
 
 example, open up port range 5000-6000, with wait time of 5 seconds between each port, and span of 300 ports per cycle,
 
@@ -81,6 +81,7 @@ fcat -p 5000-6000 -w 5 -s 300
 ```
 
 ---
+
 ### Client Mode
 
 pass command 'conn' to run as client
@@ -121,8 +122,6 @@ show help
 to build Fcat binary, run
 
     crystal build src/fcat.cr --release -o bin/fcat
-
-RPM and DEB packaging is done via fpm
 
 ---
 
