@@ -37,7 +37,7 @@ to install the binary on Ubuntu or Centos distros
     sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
 
 ### Ubuntu 21.04
-
+    apt install -y libevent-dev
     sudo wget https://github.com/perfecto25/fcat/releases/download/0.1.3/fcat-0.1.3-ubuntu21 -O /usr/local/bin/fcat;sudo chown root:root /usr/local/bin/fcat;
     sudo chmod 755 /usr/local/bin/fcat;
     sudo ln -s /usr/local/bin/fcat /usr/bin/fcat
