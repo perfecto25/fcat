@@ -16,6 +16,26 @@ Fcat can open up ports for testing and close them once testing is complete.
 
 ---
 
+## Example
+
+here is a simple example, 
+
+
+![Example](example.png)
+
+
+I want to test connectivity from Right host into Left host
+
+I open up a range of ports on Left host, 19000-19010 (10 ports) and 1 more 19020 port, total of 11 ports
+
+I test connecting to this range from the Right host, testing a range of 20 total ports. 
+
+You can see that all ports are open, and the refused ports are those that are not up and listening.
+
+
+---
+
+
 ## Installation
 
 to install the binary on Ubuntu or Centos distros
