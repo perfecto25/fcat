@@ -1,5 +1,5 @@
 name: fcat
-version: 0.1.2
+version: 0.1.3
 
 authors:
   - Mike R (https://github.com/perfecto25)
@@ -16,6 +16,6 @@ dependencies:
     github: arcage/crystal-ipaddr
 
 
-crystal: 0.35.1
+crystal: 1.13.2
 
 license: MIT
